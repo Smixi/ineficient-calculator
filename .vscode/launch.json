@@ -1,0 +1,102 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Add",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "add/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3000",
+                "MS_EVAL": "http://localhost:3002"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
+        },
+        {
+            "name": "Sub",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "sub/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3001",
+                "MS_EVAL": "http://localhost:3002"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
+        },
+        {
+            "name": "Eval",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "eval/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3002",
+                "MS_ADD": "http://localhost:3000",
+                "MS_SUB": "http://localhost:3001",
+                "MS_MULT": "http://localhost:3003",
+                "MS_DIV": "http://localhost:3004"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
+        },
+        {
+            "name": "Mult",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "mult/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3003",
+                "MS_EVAL": "http://localhost:3002"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
+        },
+        {
+            "name": "Div",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "div/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3004",
+                "MS_EVAL": "http://localhost:3002"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All MS",
+            "configurations": ["Add", "Eval", "Sub", "Div", "Mult"]
+        }
+    ]
+}
