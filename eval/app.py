@@ -9,6 +9,12 @@ MS_SUB = environ.get('MS_SUB')
 MS_MULT = environ.get('MS_MULT')
 MS_DIV = environ.get('MS_DIV')
 
+service_mapping = {'add': MS_ADD,
+                   'sub': MS_SUB,
+                   'mult': MS_MULT,
+                   'div': MS_DIV
+                }
+
 # create an endpoint at http://localhost:/3000/
 @app.route("/", methods=["POST"])
 def eval():
@@ -18,10 +24,7 @@ def eval():
 
     if expression_type == "expression":
         operator = expression['operator']
-        response = {'add': requests.post(MS_ADD, json=expression),
-                    'sub': requests.post(MS_SUB, json=expression),
-                    'mult': requests.post(MS_MULT, json=expression),
-                    'div': requests.post(MS_DIV, json=expression)}[operator]
+        response = requests.post(service_mapping[operator], json=expression)
         result = response.json()['value']
     else:
         result = expression

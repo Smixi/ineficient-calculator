@@ -1,0 +1,17 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: eval-ms
+spec:
+  template:
+    metadata:
+      # This is the name of our new "Revision," it must follow the convention {service-name}-{revision-name}
+      name: eval-ms-1
+    spec:
+      containers:
+        - image: smixi/eval-ms
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MS_ADD
+              value: "http://add-ms.default.svc.cluster.local"

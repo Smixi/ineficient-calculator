@@ -2,11 +2,11 @@ import json
 import requests
 from flask import Flask, request
 from os import environ
+
 app = Flask(__name__)
 
 MS_EVAL = environ.get('MS_EVAL')
 
-# create an endpoint at http://localhost:/3000/
 @app.route("/", methods=["POST"])
 def add():
     expression_to_add = request.json
