@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eval-deployment
+  labels:
+    app: eval
+    version: "v1"
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eval
+      version: "v1"
+  template:
+    metadata:
+      labels:
+        app: eval
+        version: "v1"
+    spec:
+      containers:
+      - name: eval-ms
+        image: smixi/eval-ms
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_ADD
+            value: "http://add-service"
+          - name: MS_SUB
+            value: "http://sub-service"
+          - name: MS_MULT
+            value: "http://mult-service"
+          - name: MS_DIV
+            value: "http://div-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eval-service
+  labels:
+    app: eval
+    service: eval-service
+spec:
+  selector:
+    app: eval
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-eval
