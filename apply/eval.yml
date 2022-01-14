@@ -15,3 +15,9 @@ spec:
           env:
             - name: MS_ADD
               value: "http://add-ms.default.svc.cluster.local"
+            - name: MS_SUB
+              value: "http://sub-ms.default.svc.cluster.local"
+            - name: MS_MULT
+              value: "http://mult-ms.default.svc.cluster.local"
+            - name: MS_DIV
+              value: "http://div-ms.default.svc.cluster.local"

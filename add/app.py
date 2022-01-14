@@ -1,9 +1,13 @@
 import json
 import requests
 from flask import Flask, request
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from os import environ
 
 app = Flask(__name__)
+FlaskInstrumentor().instrument_app(app)
+RequestsInstrumentor().instrument()
 
 MS_EVAL = environ.get('MS_EVAL')
 

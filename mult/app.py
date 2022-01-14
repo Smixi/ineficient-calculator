@@ -2,16 +2,22 @@ import json
 import requests
 from flask import Flask, request
 from os import environ
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+
 app = Flask(__name__)
+
+FlaskInstrumentor().instrument_app(app)
+RequestsInstrumentor().instrument()
 
 MS_EVAL = environ.get('MS_EVAL')
 
-# create an endpoint at http://localhost:/3000/
+
 @app.route("/", methods=["POST"])
 def mult():
-    expression_to_add = request.json
-    left_operand = expression_to_add['leftOperand']
-    right_operand = expression_to_add['rightOperand']
+    expression_to_mult = request.json
+    left_operand = expression_to_mult['leftOperand']
+    right_operand = expression_to_mult['rightOperand']
 
     if left_operand['type'] == 'expression':
         response = requests.post(MS_EVAL, json=left_operand)

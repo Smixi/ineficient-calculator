@@ -91,12 +91,29 @@
                 "--no-debugger"
             ],
             "jinja": true
+        },
+        {
+            "name": "Parse",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "parse/app.py",
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "3005",
+                "MS_EVAL": "http://localhost:3002"
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
         }
     ],
     "compounds": [
         {
             "name": "All MS",
-            "configurations": ["Add", "Eval", "Sub", "Div", "Mult"]
+            "configurations": ["Add", "Eval", "Sub", "Div", "Mult", "Parse"]
         }
     ]
 }

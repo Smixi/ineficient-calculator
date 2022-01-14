@@ -2,7 +2,15 @@ import json
 import requests
 from flask import Flask, request
 from os import environ
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+
 app = Flask(__name__)
+
+FlaskInstrumentor().instrument_app(app)
+RequestsInstrumentor().instrument()
+
+
 
 MS_ADD = environ.get('MS_ADD')
 MS_SUB = environ.get('MS_SUB')
