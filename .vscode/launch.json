@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python : Fichier actuel",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Add",
             "type": "python",
             "request": "launch",
@@ -13,7 +20,8 @@
                 "FLASK_APP": "add/app.py",
                 "FLASK_ENV": "development",
                 "FLASK_RUN_PORT": "3000",
-                "MS_EVAL": "http://localhost:3002"
+                "MS_EVAL": "http://localhost:3002",
+                "TRACER_URL":
             },
             "args": [
                 "run",
@@ -108,12 +116,19 @@
                 "--no-debugger"
             ],
             "jinja": true
-        }
+        },
     ],
     "compounds": [
         {
             "name": "All MS",
-            "configurations": ["Add", "Eval", "Sub", "Div", "Mult", "Parse"]
+            "configurations": [
+                "Add",
+                "Eval",
+                "Sub",
+                "Div",
+                "Mult",
+                "Parse"
+            ],
         }
     ]
 }
