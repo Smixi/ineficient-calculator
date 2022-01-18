@@ -8,7 +8,7 @@ The purpose of this repository is for me to get hands on tools for Kubernetes: I
 
 Of course, I wanted to have some nested spans and use multi services, so I choose to implement (a badly designed) microservices stack to compute simple equation. To do so, the **parse** microservice allow to be passed on the 'POST /' route a JSON of this structure: 
 ```json
-{'expression': '1+2+3'}
+{"expression": "1+2+3"}
 ```
 
 This expression is parsed using the python AST and then converted as a JSONesque graph.
@@ -18,26 +18,26 @@ This is then evaluated using the **eval** microservice, which in turns knows how
 For example, if **eval** receives
 ```json
 {
-    'type': 'expression', 
-    'value': {
-        'operator': 'add', 
-        'leftOperand': {
-            'type': 'expression', 
-            'value': {
-                'operator': 'add', 
-                'leftOperand': {
-                    'type': 'literal', 
-                    'value': 1
+    "type": "expression", 
+    "value": {
+        "operator": "add", 
+        "leftOperand": {
+            "type": "expression", 
+            "value": {
+                "operator": "add", 
+                "leftOperand": {
+                    "type": "literal", 
+                    "value": 1
                 }, 
-                'rightOperand': {
-                    'type': 'literal', 
-                    'value': 1
+                "rightOperand": {
+                    "type": "literal", 
+                    "value": 1
                 }
             }
         }
-        'rightOperand': {
-            'type': 'literal', 
-            'value': 1
+        "rightOperand": {
+            "type": "literal", 
+            "value": 1
         }
     }
 }
