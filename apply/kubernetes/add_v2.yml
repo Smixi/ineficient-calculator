@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: add-deployment
+  name: add-deployment2
   labels:
     app: add
-    version: "v1"
+    version: "v2"
   annotations:
       "sidecar.jaegertracing.io/inject": "true"
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: add
-      version: "v1"
+      version: "v2"
   template:
     metadata:
       labels:
         app: add
-        version: "v1"
+        version: "v2"
     spec:
       containers:
       - name: add-ms
-        image: smixi/add-ms:bugged
+        image: smixi/add-ms
         ports:
         - containerPort: 5000
         env:
@@ -34,19 +34,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: add-service
-  labels:
-    app: add
-    service: add-service
-spec:
-  selector:
-    app: add
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-      name: http-add

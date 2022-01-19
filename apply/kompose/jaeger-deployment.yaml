@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: jaeger
+  name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: jaeger
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/calculator_network: "true"
+        io.kompose.service: jaeger
+    spec:
+      containers:
+        - image: jaegertracing/all-in-one:latest
+          name: jaeger
+          ports:
+            - containerPort: 6831
+            - containerPort: 16686
+          resources: {}
+      restartPolicy: Always
+status: {}

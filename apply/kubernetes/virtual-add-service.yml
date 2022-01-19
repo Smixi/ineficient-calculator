@@ -27,8 +27,8 @@ spec:
     - destination:
         host: add-service
         subset: v1
-      weight: 10
+      weight: 100
     - destination:
         host: add-service
         subset: v2
-      weight: 90
+      weight: 0

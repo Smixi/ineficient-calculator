@@ -1,0 +1,68 @@
+version: "3"
+services:
+  add:
+    image: smixi/add-ms
+    ports:
+      - "4000:5000"
+    environment:
+      MS_EVAL: "http://eval:4004"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  sub:
+    image: smixi/sub-ms
+    ports:
+      - "4001:5000"
+    environment:
+      MS_EVAL: "http://eval:4004"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  mult:
+    image: smixi/mult-ms
+    ports:
+      - "4002:5000"
+    environment:
+      MS_EVAL: "http://eval:4004"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  div:
+    image: smixi/div-ms
+    ports:
+      - "4003:5000"
+    environment:
+      MS_EVAL: "http://eval:4004"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  eval:
+    image: smixi/eval-ms
+    ports:
+      - "4004:5000"
+    environment:
+      MS_ADD: "http://add:4000"
+      MS_SUB: "http://sub:4001"
+      MS_DIV: "http://div:4003"
+      MS_MULT: "http://mult:4002"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  parse:
+    image: smixi/parse-ms
+    ports:
+      - "4005:5000"
+    environment:
+      MS_EVAL: "http://eval:4004"
+      TRACER_HOST: "jaeger"
+    networks:
+      - calculator_network
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831"
+      - "16686:16686"
+    networks:
+      - calculator_network
+networks:
+  calculator_network:
