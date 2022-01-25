@@ -8,7 +8,7 @@ services:
       MS_EVAL: "http://eval:4004"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
   sub:
     image: smixi/sub-ms
     ports:
@@ -17,7 +17,7 @@ services:
       MS_EVAL: "http://eval:4004"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
   mult:
     image: smixi/mult-ms
     ports:
@@ -26,7 +26,7 @@ services:
       MS_EVAL: "http://eval:4004"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
   div:
     image: smixi/div-ms
     ports:
@@ -35,7 +35,7 @@ services:
       MS_EVAL: "http://eval:4004"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
   eval:
     image: smixi/eval-ms
     ports:
@@ -47,7 +47,7 @@ services:
       MS_MULT: "http://mult:4002"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
   parse:
     image: smixi/parse-ms
     ports:
@@ -56,13 +56,18 @@ services:
       MS_EVAL: "http://eval:4004"
       TRACER_HOST: "jaeger"
     networks:
-      - calculator_network
+      - calculator-network
+      - out-network
+    labels:
+      kompose.service.type: LoadBalancer
+      kompose.service.expose: "true"
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
       - "6831:6831"
       - "16686:16686"
     networks:
-      - calculator_network
+      - calculator-network
 networks:
-  calculator_network:
+  calculator-network:
+  out-network:
