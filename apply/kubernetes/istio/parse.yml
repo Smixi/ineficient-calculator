@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parse-deployment
+  labels:
+    app: parse
+    version: "v1"
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parse
+      version: "v1"
+  template:
+    metadata:
+      labels:
+        app: parse
+        version: "v1"
+    spec:
+      containers:
+      - name: parse-ms
+        image: smixi/parse-ms
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_EVAL
+            value: "http://eval-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: parse-service
+  labels:
+    app: parse
+    service: parse-service
+spec:
+  selector:
+    app: parse
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-parse
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: parse-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/parse-with-istio(/|$)(.*)"
+        backend:
+          service:
+            name: parse-service
+            port:
+              number: 5000

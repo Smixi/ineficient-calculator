@@ -4,20 +4,15 @@ metadata:
   name: parse-deployment
   labels:
     app: parse
-    version: "v1"
-  annotations:
-      "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: parse
-      version: "v1"
   template:
     metadata:
       labels:
         app: parse
-        version: "v1"
     spec:
       containers:
       - name: parse-ms
@@ -50,3 +45,21 @@ spec:
       port: 80
       targetPort: 5000
       name: http-parse
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: parse-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/parse(/|$)(.*)"
+        backend:
+          service:
+            name: parse-service
+            port:
+              number: 5000

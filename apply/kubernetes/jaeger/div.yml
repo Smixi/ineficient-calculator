@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: div-deployment
+  labels:
+    app: div
+    version: "v1"
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: div
+      version: "v1"
+  template:
+    metadata:
+      labels:
+        app: div
+        version: "v1"
+    spec:
+      containers:
+      - name: div-ms
+        image: smixi/div-ms
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_EVAL
+            value: "http://eval-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: div-service
+  labels:
+    app: div
+    service: div-service
+spec:
+  selector:
+    app: div
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-div
+      

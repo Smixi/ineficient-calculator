@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: primary-deployment
+  labels:
+    name: redis-primary
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      name: redis-primary
+  template:
+    metadata:
+      labels:
+        name: redis-primary
+    spec:
+      containers:
+      - name: redis
+        image: redis:6.2.6-alpine
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ineficient-calculator-secrets
+              key: redis-secret
+        command:
+          - "redis-server"
+        args:
+          - "--protected-mode"
+          - "no"
+          - "--requirepass"
+          - "$(REDIS_PASSWORD)"
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: replica-deployment
+  labels:
+    name: redis-replica
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      name: redis-replica
+  template:
+    metadata:
+      labels:
+        name: redis-replica
+    spec:
+      subdomain: replica
+      containers:
+      - name: redis
+        image: redis:6.2.6-alpine
+        command:
+          - "redis-server"
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ineficient-calculator-secrets
+              key: redis-secret
+        args:
+          - "--slaveof"
+          - "primary"
+          - "6379"
+          - "--protected-mode"
+          - "no"
+          - "--masterauth"
+          - "$(REDIS_PASSWORD)"
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

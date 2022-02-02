@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub-deployment
+  labels:
+    app: sub
+    version: "v1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sub
+  template:
+    metadata:
+      labels:
+        app: sub
+    spec:
+      containers:
+      - name: sub-ms
+        image: smixi/sub-ms
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_EVAL
+            value: "http://eval-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sub-service
+  labels:
+    app: sub
+    service: sub-service
+spec:
+  selector:
+    app: sub
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-sub

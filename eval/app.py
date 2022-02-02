@@ -1,9 +1,12 @@
+import ast
 import json
+import redis
 import requests
 from flask import Flask, request
 from os import environ
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
@@ -12,6 +15,11 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 JAEGER_PORT = int(environ.get('TRACER_PORT', 6831))
 JAEGER_HOST = environ.get('TRACER_HOST', 'localhost')
+
+REDIS_HOST = environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = environ.get('REDIS_PORT', 6379)
+REDIS_PASSWORD = environ.get('REDIS_PASSWOD', 'password')
+
 trace.set_tracer_provider(
 TracerProvider(
         resource=Resource.create({SERVICE_NAME: "eval-ms"})
@@ -35,6 +43,9 @@ app = Flask(__name__)
 
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
+RedisInstrumentor().instrument()
+
+redis_client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 
 MS_ADD = environ.get('MS_ADD')
 MS_SUB = environ.get('MS_SUB')
@@ -47,20 +58,33 @@ service_mapping = {'add': MS_ADD,
                    'div': MS_DIV
                 }
 
-# create an endpoint at http://localhost:/3000/
+def try_eval_number(val):
+  """Convert string to correct type"""
+  try:
+    val = ast.literal_eval(val)
+  except ValueError:
+    pass
+  return val
+
 @app.route("/", methods=["POST"])
 def eval():
     obj = request.json
     expression = obj['value']
     expression_type = obj['type']
 
+    exp_as_key = json.dumps(expression)
     if expression_type == "expression":
-        operator = expression['operator']
-        response = requests.post(service_mapping[operator], json=expression)
-        result = response.json()['value']
+        # Full retarded caching here :).
+        cached = redis_client.get(exp_as_key)
+        if cached is not None:
+            result = {'value': try_eval_number(cached.decode('utf8'))}
+        else: 
+            operator = expression['operator']
+            response = requests.post(service_mapping[operator], json=expression)
+            result = response.json()['value']
+            redis_client.set(exp_as_key, result)
     else:
         result = expression
-    
     return json.dumps({"value": result}), 200
 
 if __name__ == "__main__":

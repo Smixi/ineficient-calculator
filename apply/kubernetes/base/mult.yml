@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mult-deployment
+  labels:
+    app: mult
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mult
+  template:
+    metadata:
+      labels:
+        app: mult
+    spec:
+      containers:
+      - name: mult-ms
+        image: smixi/mult-ms
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_EVAL
+            value: "http://eval-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mult-service
+  labels:
+    app: mult
+    service: mult-service
+spec:
+  selector:
+    app: mult
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-mult

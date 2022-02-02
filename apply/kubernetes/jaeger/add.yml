@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add-deployment
+  labels:
+    app: add
+    version: "v1"
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: add
+      version: "v1"
+  template:
+    metadata:
+      labels:
+        app: add
+        version: "v1"
+    spec:
+      containers:
+      - name: add-ms
+        image: smixi/add-ms:bugged
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MS_EVAL
+            value: "http://eval-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: add-service
+  labels:
+    app: add
+    service: add-service
+spec:
+  selector:
+    app: add
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http-add
