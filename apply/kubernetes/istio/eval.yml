@@ -33,6 +33,13 @@ spec:
             value: "http://mult-service"
           - name: MS_DIV
             value: "http://div-service"
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ineficient-calculator-secrets
+                key: redis-secret
+          - name: REDIS_HOST
+            value: primary
         resources:
           requests:
             memory: "64Mi"

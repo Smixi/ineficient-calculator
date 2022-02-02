@@ -4,20 +4,17 @@ metadata:
   name: eval-deployment
   labels:
     app: eval
-    version: "v1"
   annotations:
-      "sidecar.jaegertracing.io/inject": "true"
+    "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: eval
-      version: "v1"
   template:
     metadata:
       labels:
         app: eval
-        version: "v1"
     spec:
       containers:
       - name: eval-ms
@@ -33,6 +30,13 @@ spec:
             value: "http://mult-service"
           - name: MS_DIV
             value: "http://div-service"
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ineficient-calculator-secrets
+                key: redis-secret
+          - name: REDIS_HOST
+            value: primary
         resources:
           requests:
             memory: "64Mi"

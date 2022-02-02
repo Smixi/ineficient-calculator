@@ -4,6 +4,8 @@ metadata:
   name: primary-deployment
   labels:
     name: redis-primary
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1 
   selector:
@@ -46,6 +48,8 @@ metadata:
   name: replica-deployment
   labels:
     name: redis-replica
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 2 
   selector:

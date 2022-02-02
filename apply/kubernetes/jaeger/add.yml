@@ -4,20 +4,17 @@ metadata:
   name: add-deployment
   labels:
     app: add
-    version: "v1"
   annotations:
-      "sidecar.jaegertracing.io/inject": "true"
+    "sidecar.jaegertracing.io/inject": "true"
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: add
-      version: "v1"
   template:
     metadata:
       labels:
         app: add
-        version: "v1"
     spec:
       containers:
       - name: add-ms

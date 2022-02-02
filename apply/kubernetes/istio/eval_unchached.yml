@@ -1,22 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eval-deployment
+  name: eval-deployment0
   labels:
     app: eval
+    version: "v0"
+  annotations:
+      "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: eval
+      version: "v0"
   template:
     metadata:
       labels:
         app: eval
+        version: "v0"
     spec:
       containers:
       - name: eval-ms
-        image: smixi/eval-ms
+        image: smixi/eval-ms:not-cached
         ports:
         - containerPort: 5000
         env:
@@ -28,13 +33,6 @@ spec:
             value: "http://mult-service"
           - name: MS_DIV
             value: "http://div-service"
-          - name: REDIS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: ineficient-calculator-secrets
-                key: redis-secret
-          - name: REDIS_HOST
-            value: primary
         resources:
           requests:
             memory: "64Mi"
@@ -42,19 +40,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: eval-service
-  labels:
-    app: eval
-    service: eval-service
-spec:
-  selector:
-    app: eval
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5000
-      name: http-eval

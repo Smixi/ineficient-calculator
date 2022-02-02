@@ -4,20 +4,17 @@ metadata:
   name: div-deployment
   labels:
     app: div
-    version: "v1"
   annotations:
-      "sidecar.jaegertracing.io/inject": "true"
+    "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: div
-      version: "v1"
   template:
     metadata:
       labels:
         app: div
-        version: "v1"
     spec:
       containers:
       - name: div-ms

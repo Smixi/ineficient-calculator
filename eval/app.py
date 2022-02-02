@@ -18,7 +18,7 @@ JAEGER_HOST = environ.get('TRACER_HOST', 'localhost')
 
 REDIS_HOST = environ.get('REDIS_HOST', 'localhost')
 REDIS_PORT = environ.get('REDIS_PORT', 6379)
-REDIS_PASSWORD = environ.get('REDIS_PASSWOD', 'password')
+REDIS_PASSWORD = environ.get('REDIS_PASSWORD', 'password')
 
 trace.set_tracer_provider(
 TracerProvider(
@@ -77,7 +77,7 @@ def eval():
         # Full retarded caching here :).
         cached = redis_client.get(exp_as_key)
         if cached is not None:
-            result = {'value': try_eval_number(cached.decode('utf8'))}
+            result = try_eval_number(cached.decode('utf8'))
         else: 
             operator = expression['operator']
             response = requests.post(service_mapping[operator], json=expression)

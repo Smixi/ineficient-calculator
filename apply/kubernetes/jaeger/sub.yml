@@ -4,20 +4,15 @@ metadata:
   name: sub-deployment
   labels:
     app: sub
-    version: "v1"
-  annotations:
-      "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: sub
-      version: "v1"
   template:
     metadata:
       labels:
         app: sub
-        version: "v1"
     spec:
       containers:
       - name: sub-ms

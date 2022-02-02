@@ -4,7 +4,6 @@ metadata:
   name: mult-deployment
   labels:
     app: mult
-    version: "v1"
   annotations:
       "sidecar.jaegertracing.io/inject": "true"
 spec:
@@ -12,12 +11,10 @@ spec:
   selector:
     matchLabels:
       app: mult
-      version: "v1"
   template:
     metadata:
       labels:
         app: mult
-        version: "v1"
     spec:
       containers:
       - name: mult-ms
